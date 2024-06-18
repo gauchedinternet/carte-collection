@@ -65,10 +65,12 @@
         template.drawTexte(credit,80,541,'Impact',20.7,"1","#a48199",0,"left")
 
         template.drawTexte(att1_titre,70,585,'Impact',25,"1","#f2ac9a",0,"left")
-        template.drawTexte(att1_desc,70,619,'Impact',17.9,"1","#ded6c4",0,"left")
+        template.drawTexte(att1_desc,70,619,'Impact',20.7,"1","#ded6c4",0,"left")
+
+        let s = Math.min(330/template.wordSize(att2_desc,1),1)
 
         template.drawTexte(att2_titre,70,702,'Impact',25,"1","#f2ac9a",0,"left")
-        template.drawTexte(att2_desc,71,744,'Impact',33,"1","#ded6c4",0,"left")
+        template.drawTexte(att2_desc,71,744,'Impact',33*s,"1","#ded6c4",0,"left")
 
         template.drawTexte(att3_titre,70,804,'Impact',25,"1","#f2ac9a",0,"left")
         template.drawTexte(att3_desc,70,833,'Impact',25,"1","#ded6c4",0,"left")
