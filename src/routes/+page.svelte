@@ -27,7 +27,7 @@
     let template:Template
     let config:configuration
 
-    let f1 = (new FontFace('Impact', 'url(/fonts/impact.woff)')).load()
+    let f1 = (new FontFace('Impact', 'url(./fonts/impact.woff)')).load()
     
     let loaded = new Promise( (resolve, reject) => Promise.all([f1]).then((r) => { 
         for (let f of r){
