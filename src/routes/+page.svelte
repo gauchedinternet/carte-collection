@@ -149,7 +149,7 @@
             <Input type="textarea" placeholder="Description" bind:value={att3_desc.data}/>
         </fieldset>
 
-        <Button on:click={() => template.download()}>Télécharger</Button>
+        <Button on:click={() => template.download("Carte")}>Télécharger</Button>
 
 
         
