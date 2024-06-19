@@ -1,83 +1,112 @@
 <script lang="ts">
     import Button from "$lib/Button.svelte";
-    import { afterUpdate,beforeUpdate } from "svelte";
-    import { Template } from "canvas-editor";
+    import { afterUpdate,beforeUpdate, onMount } from "svelte";
+
+
+    import { Template, CE_Text, CE_Picture, CE_Vec2 } from "canvas-editor";
     import type { configuration } from "canvas-editor";
 
     import Input from "$lib/Input.svelte";
 
-    let nom = "Rachel Kéké (50ans)"
-    let circo = "7e circonscription du Val-de-Marne"
-    let credit = ""
+    let nom:CE_Text = new CE_Text('Impact',33,"1","#aa2c4a",0,"left")
+    nom.data = "Rachel Kéké (50ans)"
+    nom.position = new CE_Vec2(71,68)
+
+    let circo:CE_Text = new CE_Text('Impact',20.7,"1","#aa2c4a",0,"left")
+    circo.data = "7e circonscription du Val-de-Marne"
+    circo.position = new CE_Vec2(71,96)
+
+    let credit:CE_Text = new CE_Text('Impact',20.7,"1","#a48199",0,"left")
+    credit.data = ""
+    credit.position = new CE_Vec2(80,541)
+    
     let partie:string = ""
 
-    let att1_titre:string = "Députée Sortante"
-    let att1_desc:string= "Lutte pour la"
-    let att2_titre:string= "Proposition"
-    let att2_desc:string= "PORTER"
-    let att3_titre:string= "Info bonus"
-    let att3_desc:string= "22 mois"
+    let att1_titre:CE_Text = new CE_Text('Impact',33,"1","#aa2c4a",0,"left")
+    att1_titre.data = "Députée Sortante"
+    att1_titre.position = new CE_Vec2(70,585)
 
+    let att1_desc:CE_Text = new CE_Text('Impact',20.7,"1","#ded6c4",0,"left")
+    att1_desc.data = "Lutte pour la"
+    att1_desc.position = new CE_Vec2(70,619)
+
+    let att2_titre:CE_Text = new CE_Text('Impact',25,"1","#f2ac9a",0,"left")
+    att2_titre.data = "Proposition"
+    att2_titre.position = new CE_Vec2(70,702)
+
+    let att2_desc:CE_Text = new CE_Text('Impact',33,"1","#ded6c4",0,"left")
+    att2_desc.data = "PORTER"
+    att2_desc.position = new CE_Vec2(71,744)
+
+    let att3_titre:CE_Text = new CE_Text('Impact',25,"1","#f2ac9a",0,"left")
+    att3_titre.data = "Info bonus"
+    att3_titre.position = new CE_Vec2(70,804)
+
+    let att3_desc:CE_Text = new CE_Text('Impact',25,"1","#ded6c4",0,"left")
+    att3_desc.data = "22 mois"
+    att3_desc.position = new CE_Vec2(70,833)
+
+    let loi_image = new CE_Picture()
     let loi :string="base"
 
+    let background = new CE_Picture()
+
+
     let files1: File[]
+    let image1 = new CE_Picture()
+    image1.position = new CE_Vec2(70,122)
+    image1.resize(new CE_Vec2(600,394))
 
     let canvas : HTMLCanvasElement|undefined = undefined
 
     let template:Template
     let config:configuration
 
-    let f1 = (new FontFace('Impact', 'url(./fonts/impact.woff)')).load()
-    
-    let loaded = new Promise( (resolve, reject) => Promise.all([f1]).then((r) => { 
-        for (let f of r){
-            document.fonts.add(f);
-        }
-        resolve(undefined)
-    }))
 
-    afterUpdate(async () =>{
+    onMount(() => {
         config = {
-            backgroundURL:`./cards/POKEDEPUTE${partie}.PNG`,
             height:1039,
             width:744,
             canvas:canvas!
         }
-
         template = new Template(config)
+        
+        template.add(image1)
+        template.add(background)
+
+        template.add(nom)
+        template.add(circo)
+        template.add(credit)
+        template.add(att1_titre)
+        template.add(att1_desc)
+        template.add(att2_titre)
+
+        att2_desc.fontSize = 33*Math.min(390/att2_desc.wordSize(template.ctx,att2_desc.data,1),1)
+
+        template.add(att2_desc)
+        template.add(att3_titre)
+        template.add(att3_desc)
+
+        template.add(loi_image)
+        loop()
     })
 
-    beforeUpdate(async () =>{
-        if (!template) return
-        await loaded
-        template.clear()
+    afterUpdate(async () =>{
+        await background.loadFromUrl(`./cards/POKEDEPUTE${partie}.PNG`)
 
-        if (files1) {
-            // load une image 
-            let image = await template.loadImageFile(files1[0])
-            template.drawResizeCropImage(image, 70,123,600,393)
+        document.fonts.add(await (new FontFace('Impact', 'url(./fonts/impact.woff)')).load())
+
+        if (files1){
+            await image1.loadFromFile(files1[0])
         }
 
-        await template.drawBackground()
-
-        template.drawTexte(nom,71,68,'Impact',33,"1","#aa2c4a",0,"left")
-        template.drawTexte(circo,71,96,'Impact',20.7,"1","#aa2c4a",0,"left")
-        template.drawTexte(credit,80,541,'Impact',20.7,"1","#a48199",0,"left")
-
-        template.drawTexte(att1_titre,70,585,'Impact',25,"1","#f2ac9a",0,"left")
-        template.drawTexte(att1_desc,70,619,'Impact',20.7,"1","#ded6c4",0,"left")
-
-        let s = Math.min(330/template.wordSize(att2_desc,1),1)
-
-        template.drawTexte(att2_titre,70,702,'Impact',25,"1","#f2ac9a",0,"left")
-        template.drawTexte(att2_desc,71,744,'Impact',33*s,"1","#ded6c4",0,"left")
-
-        template.drawTexte(att3_titre,70,804,'Impact',25,"1","#f2ac9a",0,"left")
-        template.drawTexte(att3_desc,70,833,'Impact',25,"1","#ded6c4",0,"left")
-
-        let image = await template.loadImageUrl(`./lois/${loi}.png`)
-        template.drawResizeCropImage(image, 0,0,744,1039)
+        await loi_image.loadFromUrl(`./lois/${loi}.png`)
     })
+
+    function loop(){
+        template.draw()
+        requestAnimationFrame(loop);
+    }
 
 </script>
 
@@ -89,9 +118,9 @@
 
     <div class="flex gap-4 flex-col overflow-y-auto overflow-x-visible">
 
-        <Input placeholder="Nom" bind:value={nom}/>
-        <Input placeholder="Circo" bind:value={circo}/>
-        <Input placeholder="Crédits" bind:value={credit}/>
+        <Input placeholder="Nom" bind:value={nom.data}/>
+        <Input placeholder="Circo" bind:value={circo.data}/>
+        <Input placeholder="Crédits" bind:value={credit.data}/>
         <Input placeholder="Partie" type="select" bind:value={partie}>
             <option value="">Vide</option>
             <option value="_EELV">EELV</option>
@@ -101,21 +130,22 @@
             <option value="_PS">PS</option>
         </Input>
         <Input placeholder="Illustration" type="file" bind:files={files1}/>
-        
-        
+
+        <Input placeholder="Alignement Horizontal" type="range" step={0.1} min={-1} max={1} bind:value={image1.anchor.x}/>
+        <Input placeholder="Alignement Vertical" type="range" step={0.1} min={-1} max={1} bind:value={image1.anchor.y}/>
 
         <fieldset class="border p-4 flex gap-4 flex-col">
             <legend>Attaque 1</legend>
 
-            <Input placeholder="Titre" bind:value={att1_titre}/>
-            <Input type="textarea" placeholder="Description" bind:value={att1_desc}/>
+            <Input placeholder="Titre" bind:value={att1_titre.data}/>
+            <Input type="textarea" placeholder="Description" bind:value={att1_desc.data}/>
         </fieldset>
         
         <fieldset class="border p-4 flex gap-4 flex-col">
             <legend>Attaque 2</legend>
 
-            <Input placeholder="Titre" bind:value={att2_titre}/>
-            <Input type="textarea" placeholder="Description" bind:value={att2_desc}/>
+            <Input placeholder="Titre" bind:value={att2_titre.data}/>
+            <Input type="textarea" placeholder="Description" bind:value={att2_desc.data}/>
 
             <Input placeholder="Encadré" type="select" bind:value={loi}>
                 <option value="base">Base</option>
@@ -128,8 +158,8 @@
         <fieldset class="border p-4 flex gap-4 flex-col">
             <legend>Attaque 3</legend>
 
-            <Input placeholder="Titre" bind:value={att3_titre}/>
-            <Input type="textarea" placeholder="Description" bind:value={att3_desc}/>
+            <Input placeholder="Titre" bind:value={att3_titre.data}/>
+            <Input type="textarea" placeholder="Description" bind:value={att3_desc.data}/>
         </fieldset>
 
         <Button on:click={() => template.download()}>Télécharger</Button>
