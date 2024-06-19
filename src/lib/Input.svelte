@@ -5,6 +5,7 @@
     export let files:any|undefined = undefined
     export let min:number|undefined = undefined
     export let max:number|undefined = undefined
+    export let step:number|undefined = undefined
     export let type = "text"
 
     let id = btoa(placeholder + type + Date.now().toString());
@@ -21,7 +22,7 @@
     {:else if type=="number"}
         <input id={id} type="number" min={min} max={max} placeholder={placeholder} bind:value={value} class={classes}/>
     {:else if type=="range"}
-        <input id={id} type="range" min={min} max={max} placeholder={placeholder} bind:value={value} class={classes}/>
+        <input id={id} type="range" step={step} min={min} max={max} placeholder={placeholder} bind:value={value} class={classes}/>
     {:else if type=="date"}
         <input id={id} type="date" placeholder={placeholder} bind:value={value} class={classes}/>
     {:else if type=="time"}
