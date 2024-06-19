@@ -1,56 +1,60 @@
 <script lang="ts">
     import Button from "$lib/Button.svelte";
-    import { afterUpdate,beforeUpdate, onMount } from "svelte";
+    import { afterUpdate, onMount } from "svelte";
 
-
-    import { Template, CE_Text, CE_Picture, CE_Vec2 } from "canvas-editor";
+    import { Template, CE_Text, CE_Picture, CE_Vec2, CE_FormattedText } from "canvas-editor";
     import type { configuration } from "canvas-editor";
 
     import Input from "$lib/Input.svelte";
 
-    let nom:CE_Text = new CE_Text('Impact',33,"1","#aa2c4a",0,"left")
+    let nom:CE_Text = new CE_Text('Impact',33,"400","#aa2c4a",0,"left")
     nom.data = "Rachel Kéké (50ans)"
     nom.position = new CE_Vec2(71,68)
 
-    let circo:CE_Text = new CE_Text('Impact',20.7,"1","#aa2c4a",0,"left")
+    let circo:CE_Text = new CE_Text('Impact',20.7,"400","#aa2c4a",0,"left")
     circo.data = "7e circonscription du Val-de-Marne"
     circo.position = new CE_Vec2(71,96)
 
-    let credit:CE_Text = new CE_Text('Impact',20.7,"1","#a48199",0,"left")
-    credit.data = ""
+    let credit:CE_Text = new CE_Text('Impact',20.7,"400","#a48199",0,"left")
     credit.position = new CE_Vec2(80,541)
     
     let partie:string = ""
 
-    let att1_titre:CE_Text = new CE_Text('Impact',33,"1","#aa2c4a",0,"left")
-    att1_titre.data = "Députée Sortante"
+    let att1_titre:CE_Text = new CE_Text('Impact',33,"400","#aa2c4a",0,"left")
     att1_titre.position = new CE_Vec2(70,585)
 
-    let att1_desc:CE_Text = new CE_Text('Impact',20.7,"1","#ded6c4",0,"left")
-    att1_desc.data = "Lutte pour la"
+    let f1 = (input:string) => {
+        return {
+            fontSize:20.7,
+            fontWeight:400,
+            color:"#ded6c4",
+            specialColor:"#ded6c4",
+            fontFamily:'Impact',
+            textAlign:"left",
+            output:input,
+            letterSpacing:0
+        }
+    }
+    let att1_desc:CE_Text = new CE_FormattedText(f1,670)
     att1_desc.position = new CE_Vec2(70,619)
 
-    let att2_titre:CE_Text = new CE_Text('Impact',25,"1","#f2ac9a",0,"left")
-    att2_titre.data = "Proposition"
+    let att2_titre:CE_Text = new CE_Text('Impact',25,"400","#f2ac9a",0,"left")
     att2_titre.position = new CE_Vec2(70,702)
 
-    let att2_desc:CE_Text = new CE_Text('Impact',33,"1","#ded6c4",0,"left")
-    att2_desc.data = "PORTER"
+    let att2_desc:CE_Text = new CE_Text('Impact',33,"400","#ded6c4",0,"left")
     att2_desc.position = new CE_Vec2(71,744)
+    att2_desc.width = 480
 
-    let att3_titre:CE_Text = new CE_Text('Impact',25,"1","#f2ac9a",0,"left")
-    att3_titre.data = "Info bonus"
+    let att3_titre:CE_Text = new CE_Text('Impact',25,"400","#f2ac9a",0,"left")
     att3_titre.position = new CE_Vec2(70,804)
 
-    let att3_desc:CE_Text = new CE_Text('Impact',25,"1","#ded6c4",0,"left")
-    att3_desc.data = "22 mois"
+    let att3_desc:CE_Text = new CE_FormattedText(f1,670)
     att3_desc.position = new CE_Vec2(70,833)
 
     let loi_image = new CE_Picture()
     let loi :string="base"
 
     let background = new CE_Picture()
-
 
     let files1: File[]
     let image1 = new CE_Picture()
@@ -81,7 +85,6 @@
         template.add(att1_desc)
         template.add(att2_titre)
 
-        att2_desc.fontSize = 33*Math.min(390/att2_desc.wordSize(template.ctx,att2_desc.data,1),1)
 
         template.add(att2_desc)
         template.add(att3_titre)
